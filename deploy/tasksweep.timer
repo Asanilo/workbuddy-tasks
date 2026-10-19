@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily WorkBuddy growth task sweep
+
+[Timer]
+# 每天 09:05（签到 09:00 之后）；Persistent 补跑错过的
+OnCalendar=*-*-* 09:05:00
+Persistent=true
+RandomizedDelaySec=60
+
+[Install]
+WantedBy=timers.target

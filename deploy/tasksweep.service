@@ -1,0 +1,15 @@
+[Unit]
+Description=WorkBuddy growth task sweep (tasksweep)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/code/wb2api-tasks
+# 只跑副号；auth 目录按实际修改
+ExecStart=/bin/sh -c 'mkdir -p %h/.local/state/wb2api-tasks && %h/code/wb2api-tasks/tasksweep run --all --auth-dir %h/app/wb2api-panel-v1.13.0-linux-amd64/auths --realm cn --json --quiet > %h/.local/state/wb2api-tasks/last.json 2>> %h/.local/state/wb2api-tasks/last.err'
+TimeoutStartSec=30min
+Nice=10
+
+[Install]
+WantedBy=default.target

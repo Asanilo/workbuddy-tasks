@@ -86,7 +86,7 @@ func main() {
 	var all, dryRun, includeMP bool
 	var workers int
 	var loginTimeout time.Duration
-	var loginRun bool
+	var loginNoRun bool
 	switch cmd {
 	case "list":
 		fs.StringVar(&uid, "uid", "", "只列指定 UID（可逗号分隔）")
@@ -103,7 +103,7 @@ func main() {
 		fs.IntVar(&workers, "workers", 1, "账号间并发数（默认 1，建议 1）")
 	case "login":
 		fs.DurationVar(&loginTimeout, "timeout", 5*time.Minute, "等待浏览器登录完成的超时")
-		fs.BoolVar(&loginRun, "run", false, "登录成功后立即对该账号执行扫荡")
+		fs.BoolVar(&loginNoRun, "no-run", false, "只登录，不执行扫荡（默认登录后直接扫荡）")
 	case "schema":
 		// no extra flags
 	case "help", "-h", "--help":
@@ -138,7 +138,7 @@ func main() {
 		return
 	}
 	if cmd == "login" {
-		if err := runLogin(cf, loginTimeout, loginRun); err != nil {
+		if err := runLogin(cf, loginTimeout, !loginNoRun); err != nil {
 			emitLoginError(cf, err)
 			os.Exit(exitPartial)
 		}
@@ -392,7 +392,7 @@ func usage() {
 
 命令:
   list     列出账号（不访问上游）
-  login    OAuth 一键登录（可选 --run 登录后直接扫荡）
+  login    OAuth 一键登录 + 扫荡（默认登录后直接跑；--no-run 只登录）
   tasks    查询任务列表（可 --include-mp）
   run      执行一键扫荡/领奖（--dry-run 只看待办）
   schema   输出 JSON 输出结构说明
@@ -414,14 +414,14 @@ tasks/run flags:
 login flags:
   --realm cn|global  登录版本（默认 cn）
   --timeout 5m       等待浏览器登录完成
-  --run              登录成功后立即扫荡
+  --no-run           只登录，不扫荡（默认登录后直接扫荡）
   --ndjson           流式输出 login_url / login_ok / sweep 事件
 
 退出码:
   0 全成功  1 部分失败  2 用法错误  3 无可用账号  4 上游错误
 
 示例:
-  tasksweep login --realm cn --auth-dir ./auths --run --ndjson
+  tasksweep login --realm cn --auth-dir ./auths --ndjson
   tasksweep list --auth-dir ./auths --json
   tasksweep tasks --all --json
   tasksweep run --uid <uid> --dry-run --json

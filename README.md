@@ -50,11 +50,11 @@ go test ./internal/upstream ./internal/panel
 ## 用法
 
 ```bash
-# 一键 OAuth 登录（CN），登录完成后直接扫荡
-tasksweep login --realm cn --auth-dir ./auths --run --ndjson
+# 一键 OAuth 登录 + 扫荡（默认登录完直接扫，不需要额外 --run）
+tasksweep login --realm cn --auth-dir ./auths --ndjson
 
 # 只登录，不扫荡
-tasksweep login --realm cn --auth-dir ./auths
+tasksweep login --realm cn --auth-dir ./auths --no-run
 
 # 账号列表（不访问上游）——uid 从这里拿
 tasksweep list --auth-dir /path/to/auths --json
@@ -91,7 +91,7 @@ tasksweep run --all --ndjson --quiet
 | `--include-mp` | false | 合并小程序口径任务 |
 | `--workers` | 1 | 账号间并发；建议 1 |
 | `--timeout` | 5m | `login` 等待浏览器登录的超时 |
-| `--run` | false | `login` 成功后立即扫荡该账号 |
+| `--no-run` | false | `login` 只登录不扫荡（默认登录后直接扫荡） |
 
 ## 输出示例
 
@@ -117,6 +117,42 @@ tasksweep run --all --ndjson --quiet
 ```
 
 `results[].status` 常见值：`done` / `skipped` / `error`。
+
+## AI 自动化：timer + skill
+
+推荐把“定时”和“AI 按需”分开：
+
+- **日常定时**：systemd timer 每天跑 `tasksweep run --all --json`，结果写
+  `~/.local/state/wb2api-tasks/last.json`；不依赖 agent 会话是否在运行。
+- **AI 按需**：DSH skill `workbuddy-tasks` 负责“现在扫一次 / 看上次结果 / 处理登录 /
+  诊断失败”，底层还是调同一个 CLI。
+
+仓库里已有模板：
+
+```bash
+deploy/tasksweep.service
+deploy/tasksweep.timer
+skills/workbuddy-tasks/SKILL.md
+```
+
+安装 timer（确认 auth 目录里**只有副号**后再做）：
+
+```bash
+mkdir -p ~/.config/systemd/user ~/.local/state/wb2api-tasks
+cp deploy/tasksweep.service deploy/tasksweep.timer ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now tasksweep.timer
+journalctl --user -u tasksweep.service -f
+```
+
+安装 skill（用户级）：
+
+```bash
+mkdir -p ~/.dsh/skills
+ln -sfn ~/code/wb2api-tasks/skills/workbuddy-tasks ~/.dsh/skills/workbuddy-tasks
+```
+
+skill 只是给 agent 的操作说明，不会自己定时；定时必须靠 timer。
 
 ## uid 怎么拿
 
