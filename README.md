@@ -3,7 +3,7 @@
 WorkBuddy / CodeBuddy 成长任务独立 CLI。**不启动 HTTP 代理**，只做：
 
 ```
-读 auths → 查询任务 → 接受/执行/领奖 → 输出结构化结果
+OAuth 登录（可选）→ 读 auths → 查询任务 → 接受/执行/领奖 → 输出结构化结果
 ```
 
 从 [workbuddy2api-panel](https://github.com/linguo2625469/workbuddy2api-panel)（MIT）中抽取任务相关代码，保留原许可与版权声明。
@@ -20,6 +20,8 @@ WorkBuddy / CodeBuddy 成长任务独立 CLI。**不启动 HTTP 代理**，只�
 
 1. **总是传 `--json`**。stdout 只输出 JSON，日志全部走 stderr。
 2. 先 `run --dry-run --json` 看 `pending`，再 `run --json`。
+3. 登录流程用 `login --ndjson`：会先输出 `{"event":"login_url"}`，用户打开 URL 后
+   自动输出 `login_ok` / `sweep` / `error`；不要等交互提示。
 3. 解析顶层 `ok`、`accounts[].status`、`accounts[].results[].status`。
 4. 不会等待 stdin，也没有交互确认；`run` 就是执行。
 5. 稳定退出码：
@@ -39,14 +41,22 @@ WorkBuddy / CodeBuddy 成长任务独立 CLI。**不启动 HTTP 代理**，只�
 需要 Go 1.22+：
 
 ```bash
-go build -trimpath -o tasksweep ./cmd/tasksweep
+make build          # go build -trimpath -ldflags="-s -w"
 go test ./internal/upstream ./internal/panel
 ```
+
+`-s -w` 后二进制约 **6.7 MB**；不 strip 约 9.6 MB。
 
 ## 用法
 
 ```bash
-# 账号列表（不访问上游）
+# 一键 OAuth 登录（CN），登录完成后直接扫荡
+tasksweep login --realm cn --auth-dir ./auths --run --ndjson
+
+# 只登录，不扫荡
+tasksweep login --realm cn --auth-dir ./auths
+
+# 账号列表（不访问上游）——uid 从这里拿
 tasksweep list --auth-dir /path/to/auths --json
 
 # 查询任务（只读）
@@ -80,6 +90,8 @@ tasksweep run --all --ndjson --quiet
 | `--dry-run` | false | 只列待办，不执行 |
 | `--include-mp` | false | 合并小程序口径任务 |
 | `--workers` | 1 | 账号间并发；建议 1 |
+| `--timeout` | 5m | `login` 等待浏览器登录的超时 |
+| `--run` | false | `login` 成功后立即扫荡该账号 |
 
 ## 输出示例
 
@@ -106,6 +118,12 @@ tasksweep run --all --ndjson --quiet
 
 `results[].status` 常见值：`done` / `skipped` / `error`。
 
+## uid 怎么拿
+
+- `tasksweep list --json` 的 `accounts[].uid`；
+- auth 文件名 `workbuddy-<uid>.json`；
+- `tasksweep login` 的 `account.uid` / `auth_file`。
+
 ## 重要风险
 
 - 任务动作会真实访问上游、上报行为事件、发真实对话、领取奖励；
@@ -125,8 +143,8 @@ internal/auth/        凭据解析、刷新、原子写回
 internal/...          其余依赖（原样保留以复用任务代码）
 ```
 
-当前 CLI 会编译整个 `internal/panel` 包，二进制约 9–10 MB；后续可以把任务动作拆到
-`internal/tasks`，进一步瘦身，但行为不变。
+当前 CLI 会编译整个 `internal/panel` 包，`-s -w` 后约 **6.7 MB**；后续可以把任务动作
+拆到 `internal/tasks`，进一步瘦身，但行为不变。
 
 ## License
 

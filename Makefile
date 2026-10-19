@@ -1,7 +1,7 @@
 .PHONY: build test fmt clean
 
 build:
-	go build -trimpath -o tasksweep ./cmd/tasksweep
+	go build -trimpath -ldflags="-s -w" -o tasksweep ./cmd/tasksweep
 
 test:
 	go test ./internal/upstream ./internal/panel
