@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // realmPool 构造一个含 cn/global 账号的池，并确保 globalEnabled 开关开启（缺省）。

@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // TestNoteSessionDeadThresholdNotReached 前 2 次连续 12153 不 Disable（误判防护）。

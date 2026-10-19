@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // cockpitAccount 映射 cockpit tools 导出格式的单个账号。

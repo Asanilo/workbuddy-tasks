@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
-	"github.com/arinp/wb2api-tasks/internal/pool"
-	"github.com/arinp/wb2api-tasks/internal/upstream"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/pool"
+	"github.com/asanilo/workbuddy-tasks/internal/upstream"
 )
 
 // recorderUpstream 记录全部被请求的路径，并对所有端点返回成功信封。

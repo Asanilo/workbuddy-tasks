@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
-	"github.com/arinp/wb2api-tasks/internal/reqlog"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/reqlog"
 )
 
 // captureStdout 重定向 os.Stdout（连同 chatLogOut，见 SetChatLogOutput 的注入点）

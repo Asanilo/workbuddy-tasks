@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/redisstore"
+	"github.com/asanilo/workbuddy-tasks/internal/redisstore"
 )
 
 // entry 单条会话绑定。

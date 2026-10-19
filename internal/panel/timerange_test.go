@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/pool"
-	"github.com/arinp/wb2api-tasks/internal/reqlog"
-	"github.com/arinp/wb2api-tasks/internal/usage"
+	"github.com/asanilo/workbuddy-tasks/internal/pool"
+	"github.com/asanilo/workbuddy-tasks/internal/reqlog"
+	"github.com/asanilo/workbuddy-tasks/internal/usage"
 )
 
 // parseTimeParam 是「今天 / 自定义」区间的唯一入口：前端默认发 unix 秒，手工

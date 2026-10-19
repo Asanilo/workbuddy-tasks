@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
-	"github.com/arinp/wb2api-tasks/internal/upstream"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/upstream"
 )
 
 // TestStatusCreditFloor /status 透出 pool 层的 credit_floor 生效值：

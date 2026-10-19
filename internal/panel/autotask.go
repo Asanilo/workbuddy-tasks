@@ -32,9 +32,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
-	"github.com/arinp/wb2api-tasks/internal/logfmt"
-	"github.com/arinp/wb2api-tasks/internal/upstream"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/logfmt"
+	"github.com/asanilo/workbuddy-tasks/internal/upstream"
 )
 
 // autoAction 一个可自动化的任务动作。

@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // shortBillingRetry 测试用重试间隔（生产 2s 会让单测秒级膨胀）。

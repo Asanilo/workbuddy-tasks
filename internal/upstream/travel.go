@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // growth 域路径（实测）。

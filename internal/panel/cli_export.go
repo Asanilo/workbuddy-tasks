@@ -1,6 +1,6 @@
 package panel
 
-import "github.com/arinp/wb2api-tasks/internal/auth"
+import "github.com/asanilo/workbuddy-tasks/internal/auth"
 
 // RunAutoAllForCLI 是「一键完成全部可自动化任务」的稳定导出入口。
 //

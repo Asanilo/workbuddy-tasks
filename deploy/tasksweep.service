@@ -5,9 +5,12 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-WorkingDirectory=%h/code/wb2api-tasks
-# 只跑副号；auth 目录按实际修改
-ExecStart=/bin/sh -c 'mkdir -p %h/.local/state/wb2api-tasks && %h/code/wb2api-tasks/tasksweep run --all --auth-dir %h/app/wb2api-panel-v1.13.0-linux-amd64/auths --realm cn --json --quiet > %h/.local/state/wb2api-tasks/last.json 2>> %h/.local/state/wb2api-tasks/last.err'
+WorkingDirectory=%h/code/workbuddy-tasks
+# auth 目录、realm、结果目录都走环境变量；按需改这三行。
+Environment=TASKSWEEP_AUTH_DIR=%h/.config/workbuddy-tasks/auths
+Environment=TASKSWEEP_REALM=cn
+Environment=TASKSWEEP_STATE_DIR=%h/.local/state/workbuddy-tasks
+ExecStart=/bin/sh -c 'mkdir -p "$TASKSWEEP_STATE_DIR" && %h/code/workbuddy-tasks/tasksweep run --all --json --quiet > "$TASKSWEEP_STATE_DIR/last.json" 2>> "$TASKSWEEP_STATE_DIR/last.err"'
 TimeoutStartSec=30min
 Nice=10
 

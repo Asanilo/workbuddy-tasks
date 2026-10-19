@@ -11,8 +11,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
-	"github.com/arinp/wb2api-tasks/internal/logfmt"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/logfmt"
 )
 
 // RunStreakBonusNow 对所有可用账号执行连登兑换 + 抽奖（幂等：locked/无次数自动跳过）。

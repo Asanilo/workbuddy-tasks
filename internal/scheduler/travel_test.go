@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
-	"github.com/arinp/wb2api-tasks/internal/pool"
-	"github.com/arinp/wb2api-tasks/internal/upstream"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/pool"
+	"github.com/asanilo/workbuddy-tasks/internal/upstream"
 )
 
 // travelStub 模拟 growth 域全部端点，记录调用次数与请求参数。

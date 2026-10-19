@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 func TestMPEventBase(t *testing.T) {

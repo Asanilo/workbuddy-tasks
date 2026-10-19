@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // uaCaptureTransport 记录出站请求的 User-Agent。

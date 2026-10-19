@@ -21,14 +21,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
-	"github.com/arinp/wb2api-tasks/internal/httpauth"
-	"github.com/arinp/wb2api-tasks/internal/livecfg"
-	"github.com/arinp/wb2api-tasks/internal/pool"
-	"github.com/arinp/wb2api-tasks/internal/reqlog"
-	"github.com/arinp/wb2api-tasks/internal/scheduler"
-	"github.com/arinp/wb2api-tasks/internal/upstream"
-	"github.com/arinp/wb2api-tasks/internal/usage"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/httpauth"
+	"github.com/asanilo/workbuddy-tasks/internal/livecfg"
+	"github.com/asanilo/workbuddy-tasks/internal/pool"
+	"github.com/asanilo/workbuddy-tasks/internal/reqlog"
+	"github.com/asanilo/workbuddy-tasks/internal/scheduler"
+	"github.com/asanilo/workbuddy-tasks/internal/upstream"
+	"github.com/asanilo/workbuddy-tasks/internal/usage"
 )
 
 // Config 面板依赖（main 装配注入）。

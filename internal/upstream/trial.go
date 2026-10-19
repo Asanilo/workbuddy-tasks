@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // trialPath global trial 加油包端点（Maquer/workbuddy-checkin 实测）。

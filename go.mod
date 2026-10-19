@@ -1,4 +1,4 @@
-module github.com/arinp/wb2api-tasks
+module github.com/asanilo/workbuddy-tasks
 
 go 1.22.5
 

@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
-	"github.com/arinp/wb2api-tasks/internal/pool"
-	"github.com/arinp/wb2api-tasks/internal/upstream"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/pool"
+	"github.com/asanilo/workbuddy-tasks/internal/upstream"
 )
 
 // fastActivity 关闭活跃上报账号间限速，避免测试白等 800ms。

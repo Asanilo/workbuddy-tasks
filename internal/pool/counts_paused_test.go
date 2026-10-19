@@ -3,7 +3,7 @@ package pool
 import (
 	"testing"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // TestCountsPausedSeparate 暂停号在两种口径下的计数（issue #125）。

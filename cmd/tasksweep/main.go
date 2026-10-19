@@ -21,9 +21,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
-	"github.com/arinp/wb2api-tasks/internal/panel"
-	"github.com/arinp/wb2api-tasks/internal/upstream"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/panel"
+	"github.com/asanilo/workbuddy-tasks/internal/upstream"
 )
 
 const (
@@ -76,11 +76,11 @@ func main() {
 	cf := &commonFlags{}
 	fs := flag.NewFlagSet(cmd, flag.ContinueOnError)
 	fs.SetOutput(os.Stderr)
-	fs.StringVar(&cf.authDir, "auth-dir", "auths", "账号凭据目录（workbuddy-*.json）")
+	fs.StringVar(&cf.authDir, "auth-dir", envOr("TASKSWEEP_AUTH_DIR", "auths"), "账号凭据目录（workbuddy-*.json；可用 TASKSWEEP_AUTH_DIR）")
 	fs.BoolVar(&cf.json, "json", false, "强制 JSON 输出（非 TTY 默认开启）")
 	fs.BoolVar(&cf.ndjson, "ndjson", false, "每个账号一行 JSON")
 	fs.BoolVar(&cf.quiet, "quiet", false, "丢弃日志（stdout 仍输出结果）")
-	fs.StringVar(&cf.realm, "realm", "cn", "账号域：cn | global | all")
+	fs.StringVar(&cf.realm, "realm", envOr("TASKSWEEP_REALM", "cn"), "账号域：cn | global | all（可用 TASKSWEEP_REALM）")
 
 	var uid string
 	var all, dryRun, includeMP bool
@@ -382,6 +382,13 @@ func writeOutput(cf *commonFlags, env Envelope) {
 		}
 		fmt.Println()
 	}
+}
+
+func envOr(key, fallback string) string {
+	if v := strings.TrimSpace(os.Getenv(key)); v != "" {
+		return v
+	}
+	return fallback
 }
 
 func usage() {

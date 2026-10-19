@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // GlobalModelNames 国际版（global realm）历史静态名单（PLAN §7.2 附录 21 名）。

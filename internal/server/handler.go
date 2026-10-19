@@ -16,16 +16,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
-	"github.com/arinp/wb2api-tasks/internal/httpauth"
-	"github.com/arinp/wb2api-tasks/internal/livecfg"
-	"github.com/arinp/wb2api-tasks/internal/logfmt"
-	"github.com/arinp/wb2api-tasks/internal/pool"
-	"github.com/arinp/wb2api-tasks/internal/prompt"
-	"github.com/arinp/wb2api-tasks/internal/reqlog"
-	"github.com/arinp/wb2api-tasks/internal/session"
-	"github.com/arinp/wb2api-tasks/internal/upstream"
-	"github.com/arinp/wb2api-tasks/internal/usage"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/httpauth"
+	"github.com/asanilo/workbuddy-tasks/internal/livecfg"
+	"github.com/asanilo/workbuddy-tasks/internal/logfmt"
+	"github.com/asanilo/workbuddy-tasks/internal/pool"
+	"github.com/asanilo/workbuddy-tasks/internal/prompt"
+	"github.com/asanilo/workbuddy-tasks/internal/reqlog"
+	"github.com/asanilo/workbuddy-tasks/internal/session"
+	"github.com/asanilo/workbuddy-tasks/internal/upstream"
+	"github.com/asanilo/workbuddy-tasks/internal/usage"
 )
 
 // Config handler 依赖。

@@ -3,7 +3,7 @@ package pool
 import (
 	"testing"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // TestStatusExposesEnterpriseFlag 面板需要 per-account 的「是否企业版」来决定

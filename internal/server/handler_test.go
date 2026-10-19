@@ -14,13 +14,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
-	"github.com/arinp/wb2api-tasks/internal/pool"
-	"github.com/arinp/wb2api-tasks/internal/prompt"
-	"github.com/arinp/wb2api-tasks/internal/redisstore"
-	"github.com/arinp/wb2api-tasks/internal/session"
-	"github.com/arinp/wb2api-tasks/internal/upstream"
-	"github.com/arinp/wb2api-tasks/internal/usage"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/pool"
+	"github.com/asanilo/workbuddy-tasks/internal/prompt"
+	"github.com/asanilo/workbuddy-tasks/internal/redisstore"
+	"github.com/asanilo/workbuddy-tasks/internal/session"
+	"github.com/asanilo/workbuddy-tasks/internal/upstream"
+	"github.com/asanilo/workbuddy-tasks/internal/usage"
 )
 
 // TestMain 默认关闭聊天表格日志（chatLogEnabled=false），消除 go test 期间的 stdout 噪音。

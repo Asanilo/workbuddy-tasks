@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="220" viewBox="0 0 960 220" role="img" aria-label="workbuddy-tasks">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="0.55" stop-color="#10233f"/>
+      <stop offset="1" stop-color="#173b5c"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#55d6be"/>
+      <stop offset="1" stop-color="#7aa7ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="220" rx="24" fill="url(#bg)"/>
+  <g opacity="0.18" stroke="#9fc6ff" stroke-width="1">
+    <path d="M0 170 C180 120 300 210 480 160 S760 90 960 140"/>
+    <path d="M0 190 C200 145 320 225 500 180 S780 120 960 170"/>
+  </g>
+  <g transform="translate(46 46)">
+    <rect x="0" y="0" width="64" height="64" rx="16" fill="#0e1a2b" stroke="url(#accent)" stroke-width="2"/>
+    <path d="M16 42 L28 20 L40 42 Z" fill="none" stroke="url(#accent)" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="28" cy="42" r="3.5" fill="#55d6be"/>
+    <circle cx="40" cy="42" r="3.5" fill="#7aa7ff"/>
+  </g>
+  <text x="132" y="90" fill="#f4f8ff" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="0.5">workbuddy-tasks</text>
+  <text x="134" y="128" fill="#a9c2e8" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="18">Growth-task CLI for WorkBuddy / CodeBuddy</text>
+  <text x="134" y="160" fill="#7d97bd" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">login + sweep · JSON output · timer &amp; agent friendly</text>
+  <g transform="translate(700 132)">
+    <rect x="0" y="0" width="214" height="40" rx="20" fill="#0d1a2c" stroke="#2c4a70"/>
+    <circle cx="24" cy="20" r="5" fill="#55d6be"/>
+    <text x="40" y="25" fill="#cfe2ff" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">tasksweep run --all</text>
+  </g>
+</svg>

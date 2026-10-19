@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // TestEnterpriseResourceMapsAllocatedQuota 企业版额度走 get-enterprise-user-usage：

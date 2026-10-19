@@ -5,13 +5,13 @@ description: 运行 WorkBuddy 成长任务 CLI：OAuth 登录后直接扫荡、�
 
 # WorkBuddy 成长任务
 
-使用独立 CLI `tasksweep`（仓库 `~/code/wb2api-tasks`），不要启动 wb2api HTTP 代理。
+使用独立 CLI `tasksweep`（仓库 `~/code/workbuddy-tasks`），不要启动 wb2api HTTP 代理。
 
 ## 前置
 
 ```bash
-BIN=~/code/wb2api-tasks/tasksweep
-AUTH_DIR=~/app/wb2api-panel-v1.13.0-linux-amd64/auths
+BIN=~/code/workbuddy-tasks/tasksweep
+AUTH_DIR=~/.config/workbuddy-tasks/auths
 ```
 
 - 只对**副号**使用；不要在主号/主反代正在使用的号上跑。
@@ -53,7 +53,7 @@ tasksweep tasks --all --auth-dir "$AUTH_DIR" --json
 
 ```bash
 tasksweep run --all --auth-dir "$AUTH_DIR" --realm cn --json --quiet \
-  > ~/.local/state/wb2api-tasks/last.json 2>> ~/.local/state/wb2api-tasks/last.err
+  > ~/.local/state/workbuddy-tasks/last.json 2>> ~/.local/state/workbuddy-tasks/last.err
 ```
 
 模板在仓库 `deploy/tasksweep.service` / `deploy/tasksweep.timer`。安装前先确认：

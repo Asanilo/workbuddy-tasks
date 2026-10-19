@@ -15,7 +15,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/auth"
+	"github.com/asanilo/workbuddy-tasks/internal/auth"
 )
 
 // reportPath 活跃上报通道（实测）。

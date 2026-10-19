@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arinp/wb2api-tasks/internal/redisstore"
+	"github.com/asanilo/workbuddy-tasks/internal/redisstore"
 )
 
 // countingStore 记录镜像调用次数的假 Store（不联网）。
