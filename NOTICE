@@ -1,0 +1,28 @@
+wb2api-tasks
+============
+
+This project contains code derived from workbuddy2api-panel:
+
+  Original project: https://github.com/linguo2625469/workbuddy2api-panel
+  Upstream/fork lineage:
+    - https://github.com/Sliverkiss/workbuddy2api
+    - https://github.com/linguo2625469/workbuddy2api-panel
+
+  Copyright (c) 2026 Sliverkiss
+  Copyright (c) 2026 linguo2625469
+  Copyright (c) 2026 wb2api-tasks contributors
+
+The original code is licensed under the MIT License. See LICENSE.
+
+Modifications in this repository:
+  - extracted the task/growth-task functionality into a standalone CLI
+    (cmd/tasksweep) that does not start the HTTP proxy;
+  - added structured, AI-friendly JSON output and stable exit codes;
+  - added cli_export.go to expose the task runner without the HTTP panel;
+  - removed the original proxy server entrypoint from this repository's
+    build target (the copied internal packages remain for task logic).
+
+This project is for personal, self-hosted use with your own authorized
+accounts only. It is not affiliated with Tencent, CodeBuddy, or WorkBuddy.
+Use at your own risk; automated task execution may violate upstream terms
+and can lead to account restrictions.

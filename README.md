@@ -1,0 +1,135 @@
+# wb2api-tasks
+
+WorkBuddy / CodeBuddy 成长任务独立 CLI。**不启动 HTTP 代理**，只做：
+
+```
+读 auths → 查询任务 → 接受/执行/领奖 → 输出结构化结果
+```
+
+从 [workbuddy2api-panel](https://github.com/linguo2625469/workbuddy2api-panel)（MIT）中抽取任务相关代码，保留原许可与版权声明。
+
+## 为什么是 CLI
+
+- 旧反代继续当模型代理，本工具只负责“扫荡/养号”；
+- 不需要跑第二个 7863 端口，也不碰 DSH 流量；
+- 适合 cron / systemd timer / AI agent 调用。
+
+## AI 友好约定
+
+给 agent 使用时，请遵守：
+
+1. **总是传 `--json`**。stdout 只输出 JSON，日志全部走 stderr。
+2. 先 `run --dry-run --json` 看 `pending`，再 `run --json`。
+3. 解析顶层 `ok`、`accounts[].status`、`accounts[].results[].status`。
+4. 不会等待 stdin，也没有交互确认；`run` 就是执行。
+5. 稳定退出码：
+
+| 退出码 | 含义 |
+|---|---|
+| 0 | 全部成功 |
+| 1 | 部分账号/任务失败（看 `accounts[].error`） |
+| 2 | 用法错误 |
+| 3 | 没有可用账号/凭据加载失败 |
+| 4 | 上游错误（保留） |
+
+6. `schema` 命令输出输出结构说明，可给 agent 做自描述。
+
+## 构建
+
+需要 Go 1.22+：
+
+```bash
+go build -trimpath -o tasksweep ./cmd/tasksweep
+go test ./internal/upstream ./internal/panel
+```
+
+## 用法
+
+```bash
+# 账号列表（不访问上游）
+tasksweep list --auth-dir /path/to/auths --json
+
+# 查询任务（只读）
+tasksweep tasks --all --json
+tasksweep tasks --uid <uid> --include-mp --json
+
+# 预览待办（只读，不执行）
+tasksweep run --uid <uid> --dry-run --json
+
+# 执行一键扫荡 + 自动领奖（有副作用）
+tasksweep run --uid <uid> --json
+
+# 多账号（默认串行；--workers 1 最安全）
+tasksweep run --all --workers 1 --json
+
+# 每账号一行 JSON，方便流式消费
+tasksweep run --all --ndjson --quiet
+```
+
+通用参数：
+
+| 参数 | 默认 | 说明 |
+|---|---|---|
+| `--auth-dir` | `auths` | `workbuddy-*.json` 所在目录 |
+| `--realm` | `cn` | `cn` / `global` / `all` |
+| `--json` | 非 TTY 自动 | 强制 JSON |
+| `--ndjson` | false | 每账号一行 |
+| `--quiet` | false | 丢弃 stderr 日志 |
+| `--uid` | 空 | 指定账号，可逗号分隔 |
+| `--all` | false | 全部账号（`run` 必须给 `--uid` 或 `--all`） |
+| `--dry-run` | false | 只列待办，不执行 |
+| `--include-mp` | false | 合并小程序口径任务 |
+| `--workers` | 1 | 账号间并发；建议 1 |
+
+## 输出示例
+
+```json
+{
+  "ok": true,
+  "command": "run",
+  "generated_at": "2026-10-20T01:00:00+08:00",
+  "accounts": [
+    {
+      "file": "auths/workbuddy-<uid>.json",
+      "uid": "<uid>",
+      "nickname": "副号",
+      "realm": "cn",
+      "status": "ok",
+      "results": [
+        {"task_code": "first_buddy", "status": "done", "message": "已领取"},
+        {"task_code": "chat_5", "status": "done", "message": "进度 5/5"}
+      ]
+    }
+  ]
+}
+```
+
+`results[].status` 常见值：`done` / `skipped` / `error`。
+
+## 重要风险
+
+- 任务动作会真实访问上游、上报行为事件、发真实对话、领取奖励；
+- 有账号风控/封号风险，且上游协议随时可能变化；
+- **一个账号只能由一个程序负责续期**。本 CLI 会按需刷新 token 并写回 auth 文件；
+  如果同一个号同时被旧反代使用，可能互踢 refresh token；
+- **只建议用副号跑**，不要拿主号当小白鼠；
+- 不要把 `auths/`、token、面板 key 提交到仓库。
+
+## 代码结构
+
+```
+cmd/tasksweep/        CLI（list/tasks/run/schema）
+internal/panel/       任务动作实现（从原项目复制；新增 cli_export.go）
+internal/upstream/    上游协议（任务/桌面事件链/领奖/对话）
+internal/auth/        凭据解析、刷新、原子写回
+internal/...          其余依赖（原样保留以复用任务代码）
+```
+
+当前 CLI 会编译整个 `internal/panel` 包，二进制约 9–10 MB；后续可以把任务动作拆到
+`internal/tasks`，进一步瘦身，但行为不变。
+
+## License
+
+MIT。保留原项目版权声明，见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)。
+
+原项目：https://github.com/linguo2625469/workbuddy2api-panel

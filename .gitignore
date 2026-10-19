@@ -1,0 +1,15 @@
+# Build output
+/tasksweep
+/tasksweep-*
+
+# Credentials / runtime state (never commit)
+/auths/
+/data/
+*.json.bak*
+*.bak-*
+*.log
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
