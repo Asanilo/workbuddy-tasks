@@ -12,8 +12,6 @@
 
 WorkBuddy / CodeBuddy 的成长任务 CLI。读 `auths/`，跑成长任务，自动领奖，输出 JSON。
 
-它只做这一件事：**不启动反向代理，不转发模型请求，不管理账号池**。旧反代继续当代理，任务扫荡单独跑，出问题随时停。
-
 > 任务动作来自逆向的上游协议，有风控风险。只用副号，别拿主号试。
 
 ## 目录
@@ -21,7 +19,7 @@ WorkBuddy / CodeBuddy 的成长任务 CLI。读 `auths/`，跑成长任务，自
 - [特性](#特性)
 - [快速开始](#快速开始)
 - [命令](#命令)
-- [给 AI agent 的约定](#给-ai-agent-的约定)
+- [For AI](#给-ai-agent-的约定)
 - [定时与自动化](#定时与自动化)
 - [配置](#配置)
 - [输出](#输出)
@@ -32,12 +30,10 @@ WorkBuddy / CodeBuddy 的成长任务 CLI。读 `auths/`，跑成长任务，自
 ## 特性
 
 | | |
-|---|---|
-| 🎯 **一条命令登录 + 扫荡** | `tasksweep login` 默认登录后直接跑任务，不需要再敲第二条命令 |
+| --- | --- |
+| 🎯 **一条命令登录 + 扫荡** | `tasksweep login` 直接跑任务 |
 | 🧾 **结构化输出** | stdout 只有 JSON，日志走 stderr；退出码固定，方便脚本和 agent 判断 |
 | 🕒 **适合定时** | 提供 systemd user timer 模板，每天自动跑，结果落 `last.json` |
-| 🧩 **MIT** | 从 [workbuddy2api-panel](https://github.com/linguo2625469/workbuddy2api-panel) 抽出的任务代码，保留原许可 |
-| 🛡️ **隔离** | 不占 7863，不碰 DSH/旧反代的模型流量；可以只给它一个副号 |
 
 ## 快速开始
 
@@ -78,7 +74,7 @@ cd workbuddy-tasks
 make build
 ```
 
-第一次用副号登录，登录完直接扫：
+登录直接扫荡：
 
 ```bash
 ./tasksweep login --realm cn --auth-dir ~/.config/workbuddy-tasks/auths --ndjson
@@ -133,7 +129,7 @@ tasksweep run --all --ndjson --quiet
 退出码：
 
 | 码 | 含义 |
-|---|---|
+| --- | --- |
 | 0 | 全部成功 |
 | 1 | 部分账号或任务失败 |
 | 2 | 用法错误 |
@@ -142,7 +138,7 @@ tasksweep run --all --ndjson --quiet
 
 ## 给 AI agent 的约定
 
-这一节是机器可执行的契约，不只是说明。
+这一节是机器可执行的契约和说明。
 
 **输出**
 
@@ -173,14 +169,13 @@ tasksweep run --all --ndjson --quiet
 **环境变量**
 
 | 变量 | 用途 |
-|---|---|
+| --- | --- |
 | `TASKSWEEP_AUTH_DIR` | 默认 auth 目录，等价于 `--auth-dir` |
 | `TASKSWEEP_REALM` | 默认域，`cn` / `global` |
 
 **不要做的事**
 
 - 不要把 token、auth 文件、面板 key 放进 prompt 或提交到仓库。
-- 不要在主号上跑真实扫荡。
 - 不要在失败后连续重试；先看 `error`，确认是登录过期、上游限流还是任务协议变化。
 
 ## 定时与自动化
@@ -208,7 +203,7 @@ systemctl --user start tasksweep.service
 cat ~/.local/state/workbuddy-tasks/last.json
 ```
 
-仓库里还有可选的 DSH skill（`skills/workbuddy-tasks/SKILL.md`），用来让 agent 按需执行或诊断；它不负责定时：
+可选的 skill（`skills/workbuddy-tasks/SKILL.md`），用来让 agent 按需执行或诊断；它不负责定时：
 
 ```bash
 mkdir -p ~/.dsh/skills
@@ -229,7 +224,7 @@ flowchart LR
 ## 配置
 
 | 参数 | 默认 | 说明 |
-|---|---|---|
+| --- | --- | --- |
 | `--auth-dir` | `auths` | `workbuddy-*.json` 所在目录 |
 | `--realm` | `cn` | `cn` / `global` / `all` |
 | `--json` | 非 TTY 自动 | 强制 JSON |
@@ -254,7 +249,7 @@ flowchart LR
     {
       "file": "auths/workbuddy-<uid>.json",
       "uid": "<uid>",
-      "nickname": "副号",
+      "nickname": "小号",
       "realm": "cn",
       "status": "ok",
       "results": [
@@ -270,11 +265,9 @@ flowchart LR
 
 ## 风险与边界
 
-任务扫荡是在模拟官方客户端：上报行为事件、发真实对话、领奖励。这有几个后果：
-
 - 账号可能被风控、限流或封禁；
-- 上游协议随时可能改，任务会半残或静默失败；
-- 一个账号只能由一个程序负责刷新 token，和旧反代共用会互踢；
+- 上游协议随时可能改，任务会中断或静默失败；
+- 一个账号只能由一个程序负责刷新 token，和多个反代共用会互踢；
 - 本工具不提供账号注册、批量养号、转售或托管能力。
 
 只建议副号使用。失败时先看 `accounts[].error` 和 stderr，不要连续重试。
