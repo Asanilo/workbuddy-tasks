@@ -15,7 +15,7 @@ systemctl --user enable --now tasksweep.timer
 
 - `TASKSWEEP_AUTH_DIR`：只放副号的 auth 目录
 - `TASKSWEEP_REALM`：`cn` 或 `global`
-- `WorkingDirectory` / `ExecStart`：如果仓库不在 `~/code/workbuddy-tasks`
+- `WorkingDirectory` / `ExecStart`：如果仓库不在 `~/Code/workbuddy-tasks`
 
 ## 手动跑一次
 

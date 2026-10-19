@@ -5,12 +5,12 @@ description: 运行 WorkBuddy 成长任务 CLI：OAuth 登录后直接扫荡、�
 
 # WorkBuddy 成长任务
 
-使用独立 CLI `tasksweep`（仓库 `~/code/workbuddy-tasks`），不要启动 wb2api HTTP 代理。
+使用独立 CLI `tasksweep`（仓库 `~/Code/workbuddy-tasks`），不要启动 wb2api HTTP 代理。
 
 ## 前置
 
 ```bash
-BIN=~/code/workbuddy-tasks/tasksweep
+BIN=~/Code/workbuddy-tasks/tasksweep
 AUTH_DIR=~/.config/workbuddy-tasks/auths
 ```
 

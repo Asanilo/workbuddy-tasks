@@ -7,6 +7,7 @@
   <img alt="License" src="https://img.shields.io/badge/license-MIT-2ea44f">
   <img alt="Platform" src="https://img.shields.io/badge/platform-linux%20%7C%20macOS%20%7C%20windows-lightgrey">
   <img alt="Output" src="https://img.shields.io/badge/output-JSON-6f42c1">
+  <a href="https://github.com/Asanilo/workbuddy-tasks/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/Asanilo/workbuddy-tasks?label=release"></a>
 </p>
 
 WorkBuddy / CodeBuddy 的成长任务 CLI。读 `auths/`，跑成长任务，自动领奖，输出 JSON。
@@ -39,6 +40,35 @@ WorkBuddy / CodeBuddy 的成长任务 CLI。读 `auths/`，跑成长任务，自
 | 🛡️ **隔离** | 不占 7863，不碰 DSH/旧反代的模型流量；可以只给它一个副号 |
 
 ## 快速开始
+
+### 直接下载
+
+从 [Releases](https://github.com/Asanilo/workbuddy-tasks/releases/latest) 拿对应平台的二进制：
+
+```bash
+# Linux x86_64
+curl -L -o tasksweep https://github.com/Asanilo/workbuddy-tasks/releases/latest/download/tasksweep-linux-amd64
+chmod +x tasksweep
+```
+
+macOS / Windows / arm64 的资产名：
+
+```text
+tasksweep-linux-amd64
+tasksweep-linux-arm64
+tasksweep-darwin-amd64
+tasksweep-darwin-arm64
+tasksweep-windows-amd64.exe
+checksums.txt
+```
+
+校验：
+
+```bash
+sha256sum -c checksums.txt
+```
+
+### 源码构建
 
 需要 Go 1.22+。
 
@@ -182,7 +212,7 @@ cat ~/.local/state/workbuddy-tasks/last.json
 
 ```bash
 mkdir -p ~/.dsh/skills
-ln -sfn ~/code/workbuddy-tasks/skills/workbuddy-tasks ~/.dsh/skills/workbuddy-tasks
+ln -sfn ~/Code/workbuddy-tasks/skills/workbuddy-tasks ~/.dsh/skills/workbuddy-tasks
 ```
 
 流程大致是这样：

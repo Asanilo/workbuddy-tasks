@@ -5,12 +5,12 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-WorkingDirectory=%h/code/workbuddy-tasks
+WorkingDirectory=%h/Code/workbuddy-tasks
 # auth 目录、realm、结果目录都走环境变量；按需改这三行。
 Environment=TASKSWEEP_AUTH_DIR=%h/.config/workbuddy-tasks/auths
 Environment=TASKSWEEP_REALM=cn
 Environment=TASKSWEEP_STATE_DIR=%h/.local/state/workbuddy-tasks
-ExecStart=/bin/sh -c 'mkdir -p "$TASKSWEEP_STATE_DIR" && %h/code/workbuddy-tasks/tasksweep run --all --json --quiet > "$TASKSWEEP_STATE_DIR/last.json" 2>> "$TASKSWEEP_STATE_DIR/last.err"'
+ExecStart=/bin/sh -c 'mkdir -p "$TASKSWEEP_STATE_DIR" && %h/Code/workbuddy-tasks/tasksweep run --all --json --quiet > "$TASKSWEEP_STATE_DIR/last.json" 2>> "$TASKSWEEP_STATE_DIR/last.err"'
 TimeoutStartSec=30min
 Nice=10
 
