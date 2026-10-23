@@ -35,6 +35,10 @@ tasksweep list --auth-dir "$AUTH_DIR" --json
 
 # 查任务列表（只读）
 tasksweep tasks --all --auth-dir "$AUTH_DIR" --json
+
+# 查积分与到期（只读，不改状态）
+tasksweep credits --all --auth-dir "$AUTH_DIR" --json
+tasksweep credits --uid <uid> --soon 30 --packages --auth-dir "$AUTH_DIR" --json
 ```
 
 ## AI 调用约定
@@ -44,6 +48,7 @@ tasksweep tasks --all --auth-dir "$AUTH_DIR" --json
   `login_ok`、`sweep` 或 `error`。超时默认 5 分钟，可用 `--timeout 10m`。
 - `run` 前先 `--dry-run --json`，看 `accounts[].pending` 是否为空；空就无需执行。
 - 解析顶层 `ok`、`accounts[].status`、`accounts[].results[].status`（done/skipped/error）。
+- 积分查询用 `credits`，读 `accounts[].credits.{remain,total,soon_remain,buckets}`；加 `--packages` 才有逐包明细。
 - 退出码：0 全成功 / 1 部分失败 / 2 用法 / 3 无账号 / 4 上游。
 - 不要自动重试登录；登录需要用户在浏览器完成。不要循环刷 `run`，失败先看 `error`。
 

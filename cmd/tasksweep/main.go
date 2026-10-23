@@ -54,6 +54,25 @@ type AccountReport struct {
 	Tasks        []upstream.Task  `json:"tasks,omitempty"`
 	Pending      []upstream.Task  `json:"pending,omitempty"`
 	Results      []map[string]any `json:"results,omitempty"`
+	Credits      *CreditSummary   `json:"credits,omitempty"`
+}
+
+// CreditBucket 某自然日（UTC+8）到期的剩余积分合计。
+type CreditBucket struct {
+	Date   string `json:"date"`
+	Remain int64  `json:"remain"`
+}
+
+// CreditSummary 账号积分概览：总剩余/总量、临期窗口、逐日到期批次与可选逐包明细。
+type CreditSummary struct {
+	Remain       int64                    `json:"remain"`
+	Total        int64                    `json:"total"`
+	SoonDays     int                      `json:"soon_days"`
+	SoonRemain   int64                    `json:"soon_remain"`
+	Earliest     string                   `json:"earliest,omitempty"`      // 最近到期日（YYYY-MM-DD）
+	EarliestDays int                      `json:"earliest_days,omitempty"` // 距今天数
+	Buckets      []CreditBucket           `json:"buckets,omitempty"`
+	Packages     []upstream.CreditPackage `json:"packages,omitempty"`
 }
 
 type Envelope struct {
@@ -87,6 +106,8 @@ func main() {
 	var workers int
 	var loginTimeout time.Duration
 	var loginNoRun bool
+	var soonDays int
+	var showPackages bool
 	switch cmd {
 	case "list":
 		fs.StringVar(&uid, "uid", "", "只列指定 UID（可逗号分隔）")
@@ -95,6 +116,11 @@ func main() {
 		fs.StringVar(&uid, "uid", "", "只查指定 UID（可逗号分隔）")
 		fs.BoolVar(&all, "all", false, "查询全部账号")
 		fs.BoolVar(&includeMP, "include-mp", false, "合并小程序口径任务（可能多出 mp 专属任务）")
+	case "credits":
+		fs.StringVar(&uid, "uid", "", "只查指定 UID（可逗号分隔）")
+		fs.BoolVar(&all, "all", true, "查询全部账号（默认）")
+		fs.IntVar(&soonDays, "soon", 7, "临期窗口天数（默认 7）")
+		fs.BoolVar(&showPackages, "packages", false, "输出逐包明细（默认只输出汇总与到期批次）")
 	case "run":
 		fs.StringVar(&uid, "uid", "", "只跑指定 UID（可逗号分隔）")
 		fs.BoolVar(&all, "all", false, "跑全部账号")
@@ -182,6 +208,21 @@ func main() {
 			}
 			env.Accounts = append(env.Accounts, rep)
 		}
+	case "credits":
+		for _, a := range accts {
+			rep := AccountReport{File: a.FilePath, UID: a.UID, Nickname: a.Nickname, Realm: a.Realm()}
+			if err := ensureToken(up, a); err != nil {
+				rep.Status, rep.Error = "error", "refresh: "+err.Error()
+				partial = true
+			} else if packs, remain, total, err := up.CreditPackages(a); err != nil {
+				rep.Status, rep.Error = "error", err.Error()
+				partial = true
+			} else {
+				rep.Status = "ok"
+				rep.Credits = summarizeCredits(packs, remain, total, soonDays, showPackages)
+			}
+			env.Accounts = append(env.Accounts, rep)
+		}
 	case "run":
 		if workers < 1 {
 			workers = 1
@@ -266,6 +307,77 @@ func runOne(up *upstream.Client, pn *panel.Panel, a *auth.Auth, dryRun, includeM
 		}
 	}
 	return rep
+}
+
+// creditZone 上游到期口径固定 UTC+8——避免进程 TZ 影响「还有几天到期」。
+var creditZone = time.FixedZone("UTC+8", 8*60*60)
+
+// summarizeCredits 把逐包明细收敛成「剩余/总量 + 临期窗口 + 逐日到期批次」。
+//
+// 口径与面板一致：只统计剩余 > 0 且到期时刻在未来的包；按自然日（UTC+8）聚合；
+// soonDays 内到期的剩余量计入 soon_remain。withPackages 为 true 时附逐包明细。
+func summarizeCredits(packs []upstream.CreditPackage, remain, total int64, soonDays int, withPackages bool) *CreditSummary {
+	if soonDays < 0 {
+		soonDays = 0
+	}
+	now := time.Now().In(creditZone)
+	soonEnd := now.Add(time.Duration(soonDays) * 24 * time.Hour)
+	sum := &CreditSummary{Remain: remain, Total: total, SoonDays: soonDays}
+	bucketRemain := make(map[string]int64, 4)
+	var earliest time.Time
+	for _, p := range packs {
+		if p.Remain <= 0 {
+			continue
+		}
+		if withPackages {
+			sum.Packages = append(sum.Packages, p)
+		}
+		if p.ExpiresAt <= 0 {
+			continue
+		}
+		end := time.UnixMilli(p.ExpiresAt).In(creditZone)
+		if !end.After(now) {
+			continue
+		}
+		if earliest.IsZero() || end.Before(earliest) {
+			earliest = end
+		}
+		if !end.After(soonEnd) {
+			sum.SoonRemain += p.Remain
+		}
+		bucketRemain[end.Format("2006-01-02")] += p.Remain
+	}
+	if withPackages {
+		sort.SliceStable(sum.Packages, func(i, j int) bool {
+			a, b := sum.Packages[i], sum.Packages[j]
+			if a.ExpiresAt != b.ExpiresAt {
+				return a.ExpiresAt < b.ExpiresAt
+			}
+			return a.Name < b.Name
+		})
+	}
+	if !earliest.IsZero() {
+		sum.Earliest = earliest.Format("2006-01-02")
+		sum.EarliestDays = daysUntil(now, earliest)
+	}
+	days := make([]string, 0, len(bucketRemain))
+	for d := range bucketRemain {
+		days = append(days, d)
+	}
+	sort.Strings(days)
+	for _, d := range days {
+		sum.Buckets = append(sum.Buckets, CreditBucket{Date: d, Remain: bucketRemain[d]})
+	}
+	return sum
+}
+
+// daysUntil 返回 from 到 to 的自然日差（按各自所在时区的日期计算），不受具体时刻影响。
+func daysUntil(from, to time.Time) int {
+	fy, fm, fd := from.Date()
+	ty, tm, td := to.Date()
+	start := time.Date(fy, fm, fd, 0, 0, 0, 0, from.Location())
+	end := time.Date(ty, tm, td, 0, 0, 0, 0, to.Location())
+	return int(end.Sub(start).Hours() / 24)
 }
 
 func ensureToken(up *upstream.Client, a *auth.Auth) error {
@@ -401,6 +513,7 @@ func usage() {
   list     列出账号（不访问上游）
   login    OAuth 一键登录 + 扫荡（默认登录后直接跑；--no-run 只登录）
   tasks    查询任务列表（可 --include-mp）
+  credits  查询积分与逐包到期（只读）
   run      执行一键扫荡/领奖（--dry-run 只看待办）
   schema   输出 JSON 输出结构说明
 
@@ -418,6 +531,11 @@ tasks/run flags:
   --include-mp     合并小程序口径任务
   --workers N      账号间并发，默认 1
 
+credits flags:
+  --uid UID[,UID]  指定账号（默认全部）
+  --soon N         临期窗口天数，默认 7
+  --packages       输出逐包明细（默认只给汇总与到期批次）
+
 login flags:
   --realm cn|global  登录版本（默认 cn）
   --timeout 5m       等待浏览器登录完成
@@ -431,6 +549,8 @@ login flags:
   tasksweep login --realm cn --auth-dir ./auths --ndjson
   tasksweep list --auth-dir ./auths --json
   tasksweep tasks --all --json
+  tasksweep credits --all --json
+  tasksweep credits --uid <uid> --soon 7 --packages --json
   tasksweep run --uid <uid> --dry-run --json
   tasksweep run --all --workers 1 --json
 
@@ -461,6 +581,28 @@ func printSchema() {
 						"tasks":         map[string]any{"type": "array"},
 						"pending":       map[string]any{"type": "array"},
 						"results":       map[string]any{"type": "array"},
+						"credits": map[string]any{
+							"type": "object",
+							"properties": map[string]any{
+								"remain":        map[string]any{"type": "integer"},
+								"total":         map[string]any{"type": "integer"},
+								"soon_days":     map[string]any{"type": "integer"},
+								"soon_remain":   map[string]any{"type": "integer"},
+								"earliest":      map[string]any{"type": "string"},
+								"earliest_days": map[string]any{"type": "integer"},
+								"buckets": map[string]any{
+									"type": "array",
+									"items": map[string]any{
+										"type": "object",
+										"properties": map[string]any{
+											"date":   map[string]any{"type": "string"},
+											"remain": map[string]any{"type": "integer"},
+										},
+									},
+								},
+								"packages": map[string]any{"type": "array"},
+							},
+						},
 					},
 				},
 			},
