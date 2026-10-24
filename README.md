@@ -32,6 +32,7 @@ WorkBuddy / CodeBuddy 的成长任务 CLI。读 `auths/`，跑成长任务，自
 | 🎯 **一条命令登录 + 扫荡** | `tasksweep login` 直接跑任务 |
 | 🧾 **结构化输出** | stdout 只有 JSON，日志走 stderr；退出码固定，方便脚本和 agent 判断 |
 | 🕒 **适合定时** | 提供 systemd user timer 模板，每天自动跑，结果落 `last.json` |
+| 💰 **积分到期查询** | `tasksweep credits` 只读输出剩余/总量、临期额度与按日到期的批次（`--packages` 带逐包明细） |
 
 ## 快速开始
 
@@ -98,6 +99,7 @@ make build
 tasksweep login   登录 + 扫荡（--no-run 只登录）
 tasksweep run     对已有 auth 执行扫荡
 tasksweep tasks   查询任务列表（只读）
+tasksweep credits 查询积分与逐包到期（只读）
 tasksweep list    列出账号和 uid（不访问上游）
 tasksweep schema  输出 JSON 结构说明
 ```
@@ -110,6 +112,10 @@ tasksweep list --auth-dir ./auths --json
 
 # 查任务（只读）
 tasksweep tasks --uid <uid> --include-mp --json
+
+# 查积分与到期（只读）
+tasksweep credits --all --auth-dir ./auths --json
+tasksweep credits --uid <uid> --soon 30 --packages --json
 
 # 预览待办
 tasksweep run --uid <uid> --dry-run --json
@@ -155,6 +161,12 @@ tasksweep run --all --ndjson --quiet
 ```
 
 失败时输出 `{"event":"error","error":"..."}`。登录必须由用户在浏览器完成；agent 不要循环重试登录。
+
+**积分查询（只读）**
+
+`tasksweep credits --all --json` 输出 `accounts[].credits`：`remain` / `total`、
+`soon_days` / `soon_remain`、`earliest` / `earliest_days`、`buckets[]`（按 UTC+8 自然日聚合的到期额度）。
+默认不带逐包明细，加 `--packages` 才输出 `packages[]`。该命令只读，不改变账号或任务状态。
 
 **执行顺序**
 
